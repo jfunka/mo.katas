@@ -189,6 +189,13 @@ The rover receives a character array of commands.
 
         Will implement **Idea-1**, Idea-2 has no sense.
 
+        The wrapping is basically doing:
+        ```
+            rover.pos_x = (rover.pos_x + 1) % planet.size_x
+            rover.pos_x = (rover.pos_x - 1) % planet.size_x
+        ```
+        This is, no bound-checking is needed.
+
     2. Implement obstacle detection before each move to a new square. If a given sequence of commands encounters an obstacle, the rover moves up to the last possible point, aborts the sequence and reports the obstacle.
 
         This means:
@@ -250,6 +257,8 @@ The rover receives a character array of commands.
     - Attributes:
         - position
         - orientation
+        - limit_x = -1
+        - limit_y = -1
     - Constructor:
         - [x] Direction(pos_x, pos_y, enum Orientation)
         - Direction(obj Position, enum Orientation)
@@ -266,6 +275,15 @@ The rover receives a character array of commands.
             - turn_right
     - Notes:
         - If just the Rover knows where is it moving, I cannot call `move` or `turn` as public.
+        - Move action will be:
+            ```
+            position.x = (position.x + 1)
+            if limit_x > 0: # ... > 0 | >= 0
+                position.x = position.x % limit_x
+            ```
+            This is, apply the clamp only when the limit is defined.
+
+            ValueErrors if limits <= 0.
 
 - Rover
     - Attributes:
@@ -278,7 +296,40 @@ The rover receives a character array of commands.
             - Can we move/turn if there is no planet?
         - [x] Rover(pos_x, pos_y, orientation, planet)
     - Methods:
-        - move(move_commands): calc next move, if planet allows it, move it; if not, print warn & abort
+        - move(move_commands):
+            - Logic:
+                1. calc next pos
+                2. if planet allows it:
+                    - update pos
+                3. else:
+                    - print warn
+                    - abort&finish
+            - Pseudo-coded logic
+            ```
+            next_position = self.direction.next_position()
+            if planet.has_obstacle_at(next_position):
+                print("warn")
+                break
+            self.direction.update_position(next_position)
+            ...
+            Direction::next_position():
+                move_x, move_y = ...
+                next_position = Position()
+                next_position.x = (self.position.x + move_x) % limit_x
+                next_position.y = (self.position.y + move_y) % limit_y
+                return next_position
+                ...
+            Direction::update_position(other_position=None):
+                if other_position is not None:
+                    self.position = other_position
+                else: # ... maybe ...
+                    self.position = self.next_position()
+            ```
+            - Logic doubt:
+                - How does the Direction know the limit_x, limit_y?
+                    - [ ] `direction.next_position(planet.limit_x, planet.limit_y)`
+                        - Too many parameters, the limit's will probably always be the same.
+                    - [x] Inside Direction's constructor `direction.set_limit_x(planet.limit_x)`
         - turn(turn_commands): turn for each turn in turn_commands
             - What tells me that "N"+turn_right = "E"?
                 - [ ] ~~Orientation class~~
