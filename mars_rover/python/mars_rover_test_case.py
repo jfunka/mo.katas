@@ -2,8 +2,7 @@ import unittest
 
 from direction import *
 from rover import Rover
-from planet import Planet
-from obstacle import Obstacle
+from planet import Planet, Obstacle
 
 """
 Mars rover moves through
@@ -113,15 +112,6 @@ class PlanetTestCase(unittest.TestCase):
         self.assertTrue(planet.size_y == 4)
         self.assertTrue(len(planet.obstacles) == 0)
 
-    def test_planet_bounds(self):
-        planet = Planet(3, 4)
-
-        self.assertTrue(planet.is_inside_bounds(0, 0))
-        self.assertTrue(planet.is_inside_bounds(0, 3))
-        self.assertFalse(planet.is_inside_bounds(0, 4))
-        self.assertFalse(planet.is_inside_bounds(3, 4))
-        self.assertFalse(planet.is_inside_bounds(-1, 0))
-
     def test_planet_with_obstacles(self):
         size_x = 3
         size_y = 4
@@ -133,15 +123,15 @@ class PlanetTestCase(unittest.TestCase):
         planet = Planet(size_x, size_y, obstacles)
 
         for obs in obstacles:
-            self.assertTrue(planet.has_obstacle_at(obs.pos_x, obs.pos_y))
+            self.assertTrue(planet.has_obstacle_at(obs))
 
         for y in range(size_y):
             for x in range(size_x):
+                test_obs = Obstacle(x, y)
                 if (x, y) in obstacle_coords:
-                    self.assertTrue(planet.has_obstacle_at(x, y))
+                    self.assertTrue(planet.has_obstacle_at(test_obs))
                 else:
-                    self.assertFalse(planet.has_obstacle_at(x, y))
-
+                    self.assertFalse(planet.has_obstacle_at(test_obs))
 
 @unittest.skip("deprecated")
 class OrientationUtilsTestCase(unittest.TestCase):
