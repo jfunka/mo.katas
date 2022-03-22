@@ -37,7 +37,7 @@ class Rover(object):
             if cmd == Commands.MOVE_FORWARD:
                 next_position = self.direction.next_position_forward()
             elif cmd == Commands.MOVE_BACKWARD:
-                pass
+                next_position = self.direction.next_position_backward()
             else:
                 raise ValueError(f"Invalid move command='{cmd}'.")
 

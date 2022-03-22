@@ -60,7 +60,6 @@ class MovingRoverTestCase(unittest.TestCase):
             rover.move(movement)
             self.assert_rover_position(rover, expected_position)
 
-    @unittest.skip("not implemented")
     def test_rover_move_backward(self):
         movements = "b"
         expected_position = (0, 2)
