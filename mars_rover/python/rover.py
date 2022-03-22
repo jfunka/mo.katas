@@ -1,57 +1,41 @@
 
-def turn_orientation(turn: str, orientation: str, orientation_map: str = "NESW"):
-    # check errors
-    if turn not in "lr":
-        print(f"Warning: input turn={turn} not in 'lr'")
-        return orientation
-
-    orientation_index = orientation_map.find(orientation)
-    if orientation_index < 0:
-        print(f"Warning: input orientaion={orientation} not defined in orientation_map={orientation_map}")
-        return orientation
-
-    if turn == "l":
-        orientation_index = (orientation_index - 1) % len(orientation_map)
-    else:
-        orientation_index = (orientation_index + 1) % len(orientation_map)
-
-    return orientation_map[orientation_index]
+from orientation import Orientation, OrientationUtils
 
 
 class Rover(object):
 
-    x = 0
-    y = 0
-    orientation = 'N'
+    pos_x = 0
+    pos_y = 0
+    orientation = Orientation.NORTH
 
-    def __init__(self, start_x, start_y, orientation):
-        self.x = start_x
-        self.y = start_y
+    def __init__(self, start_x: int, start_y: int, orientation: Orientation):
+        self.pos_x = start_x
+        self.pos_y = start_y
         self.orientation = orientation
 
-    def move(self, movs):
+    def move(self, movs: str):
         for m in movs:
-            if self.orientation == "N":
+            if self.orientation == Orientation.NORTH:
                 if m == "f":
-                    self.y = self.y + 1
+                    self.pos_y = self.pos_y + 1
                 else:
-                    self.y = self.y - 1
-            elif self.orientation == "S":
+                    self.pos_y = self.pos_y - 1
+            elif self.orientation == Orientation.SOUTH:
                 if m == "f":
-                    self.y = self.y - 1
+                    self.pos_y = self.pos_y - 1
                 else:
-                    self.y = self.y + 1
-            elif self.orientation == "E":
+                    self.pos_y = self.pos_y + 1
+            elif self.orientation == Orientation.EAST:
                 if m == "f":
-                    self.x = self.x + 1
+                    self.pos_x = self.pos_x + 1
                 else:
-                    self.x = self.x - 1
-            elif self.orientation == "W":
+                    self.pos_x = self.pos_x - 1
+            elif self.orientation == Orientation.WEST:
                 if m == "f":
-                    self.x = self.x - 1
+                    self.pos_x = self.pos_x - 1
                 else:
-                    self.x = self.x + 1
+                    self.pos_x = self.pos_x + 1
 
     def turn(self, turns: str):
-        for t in turns:
-            self.orientation = turn_orientation(t, self.orientation)
+        for turn in turns:
+            self.orientation = OrientationUtils.turn_orientation(turn, self.orientation)

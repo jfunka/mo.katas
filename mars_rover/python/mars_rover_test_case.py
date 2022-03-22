@@ -21,14 +21,22 @@ Mars rover moves through
                    
 """
 
+class MovingRoverTestCase(unittest.TestCase):
 
-class MarsRoverTestCase(unittest.TestCase):
+    def assert_rover_position(self, expected_position, rover):
+        self.assertTrue(len(expected_position) == 2)
+        self.assertEqual(expected_position[0], rover.pos_x)
+        self.assertEqual(expected_position[1], rover.pos_y)
+
+    def test_rover_edge_cases(self):
+        rover = Rover(0, 0, Orientation.NORTH)
+
+        rover.move([])
+
+        self.assert_rover_position((0, 0), rover)
+
     def test_rover_move_forward(self):
-        rover = Rover(
-            start_x=1,
-            start_y=1,
-            orientation='N'
-        )
+        rover = Rover(start_x=1, start_y=1, orientation=Orientation.NORTH)
 
         movements = ['f']
         expected_position = (1, 2)
@@ -36,9 +44,54 @@ class MarsRoverTestCase(unittest.TestCase):
 
         self.assert_rover_position(expected_position, rover)
 
-    def assert_rover_position(self, expected_position, rover):
-        self.assertEqual(expected_position[0], rover.x)
-        self.assertEqual(expected_position[1], rover.y)
+    def test_rover_str_list_types_allowed(self):
+        rover = Rover(0, 0, Orientation.NORTH)
+
+        movs = "ffff"
+        rover.move(movs)
+        self.assert_rover_position((0, 4), rover)
+
+        movs = ["b", "b", "b", "b"]
+        rover.move(movs)
+        self.assert_rover_position((0, 0), rover)
+
+
+class TurningRoverTestCase(unittest.TestCase):
+
+    def test_rover_edge_cases(self):
+        rover = Rover(0, 0, Orientation.NORTH)
+        rover.turn("")
+        self.assertTrue(rover.orientation == Orientation.NORTH)
+
+    def test_rover_random_turns(self):
+        rover = Rover(0, 0, Orientation.NORTH)
+
+        rover.turn("r")
+        self.assertTrue(rover.orientation == Orientation.EAST)
+
+        rover.turn("l")
+        self.assertTrue(rover.orientation == Orientation.NORTH)
+
+        rover.turn("lrlr")
+        self.assertTrue(rover.orientation == Orientation.NORTH)
+
+    def test_rover_circular_turns(self):
+        rover = Rover(0, 0, Orientation.EAST)
+
+        rover.turn("llll")
+        self.assertTrue(rover.orientation == Orientation.EAST)
+
+        rover.turn("rrrr")
+        self.assertTrue(rover.orientation == Orientation.EAST)
+
+    def test_rover_incorrect_arg_turns(self):
+        rover = Rover(0, 0, Orientation.EAST)
+
+        self.assertRaises(ValueError, lambda: rover.turn("L"))
+        self.assertRaises(ValueError, lambda: rover.turn("a"))
+
+        rover.turn("r")
+        self.assertTrue(rover.orientation == Orientation.SOUTH)
 
 
 class PlanetTestCase(unittest.TestCase):
