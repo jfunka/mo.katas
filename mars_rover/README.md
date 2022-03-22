@@ -204,3 +204,15 @@ The rover receives a character array of commands.
         This line: 'the rover moves up to the last possible point'...
 
         - Can we ignore the obstacle (by not moving to that position) and keep moving until the last possible point? **We cannot because it is stated to 'abort the SEQUENCE of commands' and not just 'abort the COMMAND'**.
+
+### Design:
+- Planet
+    - Attributes:
+        - size_x: grid width
+        - size_y: grid height
+        - grid: 2D-matrix of chars '.' and 'o'
+    - Constructor:
+        - Planet(grid)
+    - Methods:
+        - build(...): to random fill?
+        - has_obstacle_at(test_x, test_y): return True if grid[test_y][test_x] == 'o' else False
