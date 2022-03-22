@@ -246,24 +246,46 @@ The rover receives a character array of commands.
     - Methods:
         - turn_orientation(turn, orientation): return orientation+turn
 
+- Direction:
+    - Attributes:
+        - position
+        - orientation
+    - Constructor:
+        - [x] Direction(pos_x, pos_y, enum Orientation)
+        - Direction(obj Position, enum Orientation)
+        - We can overload
+    - Methods:
+        - private:
+            - move
+            - turn
+            - auxiliar
+        - public:
+            - move_forward
+            - move_backward
+            - turn_left
+            - turn_right
+    - Notes:
+        - If just the Rover knows where is it moving, I cannot call `move` or `turn` as public.
+
 - Rover
     - Attributes:
-        - pos_x: rover position x
-        - pos_y: rover position y
-        - orientation: Orientation object, passing a str is cheap
+        - direction: Direction object
         - planet: Planet object
     - Constructor:
         - Rover(pos_x, pos_y, orientation)?
+        - Rover(direction)?
             - Is it possible to build a rover without a planet?
             - Can we move/turn if there is no planet?
-        - Rover(pos_x, pos_y, orientation, planet)
+        - [x] Rover(pos_x, pos_y, orientation, planet)
     - Methods:
         - move(move_commands): calc next move, if planet allows it, move it; if not, print warn & abort
         - turn(turn_commands): turn for each turn in turn_commands
             - What tells me that "N"+turn_right = "E"?
-                - [x] Orientation class
+                - [ ] ~~Orientation class~~
                     - Why? Because of an orientation sequence/order.
                     - Use static class?
+                - [x] Direction class
+                    - `rover.direction.turn_{left/right}()`
                 - [ ] Rover class
                 - [ ] Other class
                 - [ ] ???
@@ -272,6 +294,14 @@ The rover receives a character array of commands.
             - List[str]: ['f','f','f']
             - str: 'fff'
             - Ignore with _Duck typing_?
+    - Notes:
+        - Keep the
+            ```
+            if cmd == 'f'
+            if cmd == 'b'
+            ...
+            ```
+            logic with the Rover class, instead of Orientation/Utils.
 
 - (optional)
     - PlanetBuilder
