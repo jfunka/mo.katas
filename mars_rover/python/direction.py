@@ -67,8 +67,21 @@ class Direction(object):
         orientation_index = (orientation_index + turn_direction) % self.__orientation_order_size
         return self.__orientation_order[orientation_index]
 
-    def __move(self, move_x: int, move_y: int, clamp_x: int, clamp_y: int):
-        pass
+    def __move(self, move_direction_map: dict) -> Position:
+        # Get move step in X and Y
+        next_move = move_direction_map.get(self.orientation, None)
+        if next_move is None:
+            raise ValueError(f"Current orientation='{self.orientation}' not found in " \
+                f"'{move_direction_map.keys()}'")
+        # Update
+        next_position = Position()
+        next_position.x = next_move.x + self.position.x
+        next_position.y = next_move.y + self.position.y
+        if self.__limit_x > 0:
+            next_position.x = next_position.x % self.__limit_x
+        if self.__limit_y > 0:
+            next_position.y = next_position.y % self.__limit_y
+        return next_position
 
     def set_limit_x(self, other):
         self.__limit_x = other
@@ -76,33 +89,11 @@ class Direction(object):
     def set_limit_y(self, other):
         self.__limit_y = other
 
-    def next_position_forward(self):
-        next_move = self.__move_forward.get(self.orientation, None)
-        if next_move is None:
-            raise ValueError(f"Current orientation='{self.orientation}' not found in " \
-                f"'{self.__move_forward.keys()}'")
-        next_position = Position()
-        next_position.x = next_move.x + self.position.x
-        next_position.y = next_move.y + self.position.y
-        if self.__limit_x > 0:
-            next_position.x = next_position.x % self.__limit_x
-        if self.__limit_y > 0:
-            next_position.y = next_position.y % self.__limit_y
-        return next_position
+    def next_position_forward(self) -> Position:
+        return self.__move(self.__move_forward)
 
-    def next_position_backward(self):
-        next_move = self.__move_backward.get(self.orientation, None)
-        if next_move is None:
-            raise ValueError(f"Current orientation='{self.orientation}' not found in " \
-                f"'{self.__move_backward.keys()}'")
-        next_position = Position()
-        next_position.x = next_move.x + self.position.x
-        next_position.y = next_move.y + self.position.y
-        if self.__limit_x > 0:
-            next_position.x = next_position.x % self.__limit_x
-        if self.__limit_y > 0:
-            next_position.y = next_position.y % self.__limit_y
-        return next_position
+    def next_position_backward(self) -> Position:
+        return self.__move(self.__move_backward)
 
     def turn_left(self):
         # Gets the current orientation and turns it.

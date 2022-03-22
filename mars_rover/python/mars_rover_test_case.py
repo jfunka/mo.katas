@@ -46,7 +46,7 @@ class MovingRoverTestCase(unittest.TestCase):
         self.assert_rover_position(self.rover, expected_position)
 
     def test_rover_move_multiforward(self):
-        # (movement, position), expected_position
+        # (movement, direction), expected_position
         planet = Planet(3, 3)
         test_input = [
             (("ff", Direction(0, 0, Orientation.NORTH)), (0, 2)),
@@ -55,8 +55,8 @@ class MovingRoverTestCase(unittest.TestCase):
             (("ff", Direction(0, 0, Orientation.WEST) ), (1, 0)),
             (("fff", Direction(0, 0, Orientation.WEST) ), (0, 0)),
         ]
-        for ((movement, position), expected_position) in test_input:
-            rover = Rover(position, planet)
+        for ((movement, direction), expected_position) in test_input:
+            rover = Rover(direction, planet)
             rover.move(movement)
             self.assert_rover_position(rover, expected_position)
 
@@ -68,7 +68,6 @@ class MovingRoverTestCase(unittest.TestCase):
 
         self.assert_rover_position(self.rover, expected_position)
 
-    @unittest.skip("not implemented")
     def test_rover_str_list_types_allowed(self):
         movs = "ffff"
         self.rover.move(movs)
