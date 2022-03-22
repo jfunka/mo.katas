@@ -2,6 +2,7 @@ import unittest
 
 from rover import Rover
 from planet import Planet
+from obstacle import Obstacle
 
 """
 Mars rover moves through
@@ -41,27 +42,41 @@ class MarsRoverTestCase(unittest.TestCase):
 
 class PlanetTestCase(unittest.TestCase):
 
-    def test_planet(self):
-        grid = [
-            ['.', '.', '.', '.'],
-            ['.', '.', '.', '.'],
-            ['.', '.', '.', '.']
-        ]
-        planet = Planet(grid)
+    def test_planet_constructor(self):
+        planet = Planet(3, 4)
 
-        self.assertEqual(planet.grid, grid)
-        self.assertEqual(planet.size_x, len(grid[0]))
-        self.assertEqual(planet.size_y, len(grid))
+        self.assertTrue(planet.size_x == 3)
+        self.assertTrue(planet.size_y == 4)
+        self.assertTrue(len(planet.obstacles) == 0)
+
+    def test_planet_bounds(self):
+        planet = Planet(3, 4)
+
+        self.assertTrue(planet.is_inside_bounds(0, 0))
+        self.assertTrue(planet.is_inside_bounds(0, 3))
+        self.assertFalse(planet.is_inside_bounds(0, 4))
+        self.assertFalse(planet.is_inside_bounds(3, 4))
+        self.assertFalse(planet.is_inside_bounds(-1, 0))
 
     def test_planet_with_obstacles(self):
-        grid = [
-            ['o', '.'],
-            ['.', '.']
-        ]
-        planet = Planet(grid)
+        size_x = 3
+        size_y = 4
+        obstacles = []
+        obstacle_coords = [ (0, 0), (2, 3) ]
+        for obs_coords in obstacle_coords:
+            obstacles.append(Obstacle(obs_coords[0], obs_coords[1]))
 
-        self.assertTrue(planet.has_obstacle_at(0, 0))
-        self.assertFalse(planet.has_obstacle_at(0, 1))
+        planet = Planet(size_x, size_y, obstacles)
+
+        for obs in obstacles:
+            self.assertTrue(planet.has_obstacle_at(obs.pos_x, obs.pos_y))
+
+        for y in range(size_y):
+            for x in range(size_x):
+                if (x, y) in obstacle_coords:
+                    self.assertTrue(planet.has_obstacle_at(x, y))
+                else:
+                    self.assertFalse(planet.has_obstacle_at(x, y))
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

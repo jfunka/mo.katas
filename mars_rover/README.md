@@ -206,13 +206,23 @@ The rover receives a character array of commands.
         - Can we ignore the obstacle (by not moving to that position) and keep moving until the last possible point? **We cannot because it is stated to 'abort the SEQUENCE of commands' and not just 'abort the COMMAND'**.
 
 ### Design:
+- Obstacle:
+    - Attributes:
+        - pos_x: obstacle position x
+        - pos_y: obstacle position y
 - Planet
     - Attributes:
         - size_x: grid width
         - size_y: grid height
-        - grid: 2D-matrix of chars '.' and 'o'
+        - ~~grid: 2D-matrix of chars '.' and 'o'~~
+            - Too many restrictions
+            - What if we just passed a list of coordinates of the obstacles?
     - Constructor:
-        - Planet(grid)
+        - ~~Planet(grid)~~
+        - Planet(size_x, size_y, obstacles: List[Obstacle] = [])
+            - Better than a list of int tuples to distinguish pos_x, pos_y
+            - Somehow must be asserted that obstacles are within size_x, size_y, but it is not the Planet's job.
     - Methods:
         - build(...): to random fill?
-        - has_obstacle_at(test_x, test_y): return True if grid[test_y][test_x] == 'o' else False
+        - is_inside_bounds(test_x, test_y): return if 0 <= (test_x, test_y) < (size_x, size_y)
+        - has_obstacle_at(test_x, test_y): return True if ~~grid[test_y][test_x] == 'o'~~ any (test_x, test_y) in obstacles else False
