@@ -1,5 +1,6 @@
 import unittest
 
+from orientation import Orientation, OrientationUtils
 from rover import Rover
 from planet import Planet
 from obstacle import Obstacle
@@ -77,6 +78,39 @@ class PlanetTestCase(unittest.TestCase):
                     self.assertTrue(planet.has_obstacle_at(x, y))
                 else:
                     self.assertFalse(planet.has_obstacle_at(x, y))
+
+
+class OrientationUtilsTestCase(unittest.TestCase):
+
+    def test_single_turn(self):
+        new_orientation = OrientationUtils.turn_orientation("l", Orientation.NORTH)
+        self.assertTrue(new_orientation == Orientation.WEST)
+
+    def test_all_possible_turns(self):
+        test_input = [
+            # ( (input_turn, input_orientation), expected_orientation )
+            (("r", Orientation.NORTH), Orientation.EAST),
+            (("r", Orientation.EAST), Orientation.SOUTH),
+            (("r", Orientation.SOUTH), Orientation.WEST),
+            (("r", Orientation.WEST), Orientation.NORTH),
+            #
+            (("l", Orientation.NORTH), Orientation.WEST),
+            (("l", Orientation.WEST), Orientation.SOUTH),
+            (("l", Orientation.SOUTH), Orientation.EAST),
+            (("l", Orientation.EAST), Orientation.NORTH),
+        ]
+        for ((input_turn, input_orientation), expected_orientation) in test_input:
+            new_orientation = OrientationUtils.turn_orientation(input_turn, input_orientation)
+            self.assertTrue(new_orientation == expected_orientation)
+
+    def test_incorrect_input_format(self):
+        # lr is expected as turn
+        # Orientation.obj is expected as orientation
+        OrientationUtils.turn_orientation("a", "aa")
+        self.assertRaises(ValueError, lambda: OrientationUtils.turn_orientation("a", Orientation.NORTH))
+
+        self.assertRaises(ValueError, lambda: OrientationUtils.turn_orientation("l", "foo"))
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
