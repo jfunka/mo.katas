@@ -210,6 +210,7 @@ The rover receives a character array of commands.
     - Attributes:
         - pos_x: obstacle position x
         - pos_y: obstacle position y
+
 - Planet
     - Attributes:
         - size_x: grid width
@@ -221,8 +222,56 @@ The rover receives a character array of commands.
         - ~~Planet(grid)~~
         - Planet(size_x, size_y, obstacles: List[Obstacle] = [])
             - Better than a list of int tuples to distinguish pos_x, pos_y
-            - Somehow must be asserted that obstacles are within size_x, size_y, but it is not the Planet's job.
+            - Somehow must be asserted that obstacles are within size_x, size_y, but it is not the Planet's job
     - Methods:
         - build(...): to random fill?
         - is_inside_bounds(test_x, test_y): return if 0 <= (test_x, test_y) < (size_x, size_y)
         - has_obstacle_at(test_x, test_y): return True if ~~grid[test_y][test_x] == 'o'~~ any (test_x, test_y) in obstacles else False
+
+- Orientation
+    - Notes:
+        - ~~Make class~~
+        - ~~Make enum+methods~~
+        - ~~Make within Rover~~
+    - Attributes:
+    - ~~Constructor~~ Enum:
+        - North, South, East, West
+    - Methods:
+
+- OrientationUtils
+    - Notes:
+        - Uses Orientation and turns it in a defined direction
+        - Static class
+    - Attributes: auxiliar maps
+    - Methods:
+        - turn_orientation(turn, orientation): return orientation+turn
+
+- Rover
+    - Attributes:
+        - pos_x: rover position x
+        - pos_y: rover position y
+        - orientation: Orientation object, passing a str is cheap
+        - planet: Planet object
+    - Constructor:
+        - Rover(pos_x, pos_y, orientation)?
+            - Is it possible to build a rover without a planet?
+            - Can we move/turn if there is no planet?
+        - Rover(pos_x, pos_y, orientation, planet)
+    - Methods:
+        - move(move_commands): calc next move, if planet allows it, move it; if not, print warn & abort
+        - turn(turn_commands): turn for each turn in turn_commands
+            - What tells me that "N"+turn_right = "E"?
+                - [x] Orientation class
+                    - Why? Because of an orientation sequence/order.
+                    - Use static class?
+                - [ ] Rover class
+                - [ ] Other class
+                - [ ] ???
+        - process(move_and_turn_commands)?
+        - move_commands and turn_commands format:
+            - List[str]: ['f','f','f']
+            - str: 'fff'
+            - Ignore with _Duck typing_?
+
+- (optional)
+    - PlanetBuilder
