@@ -106,7 +106,6 @@ class OrientationUtilsTestCase(unittest.TestCase):
     def test_incorrect_input_format(self):
         # lr is expected as turn
         # Orientation.obj is expected as orientation
-        OrientationUtils.turn_orientation("a", "aa")
         self.assertRaises(ValueError, lambda: OrientationUtils.turn_orientation("a", Orientation.NORTH))
 
         self.assertRaises(ValueError, lambda: OrientationUtils.turn_orientation("l", "foo"))
