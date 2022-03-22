@@ -20,7 +20,6 @@ Mars rover moves through
                    
 """
 
-@unittest.skip("not implemented")
 class MovingRoverTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -46,11 +45,35 @@ class MovingRoverTestCase(unittest.TestCase):
 
         self.assert_rover_position(self.rover, expected_position)
 
-    @unittest.skip("dodge")
+    def test_rover_move_multiforward(self):
+        # (movement, position), expected_position
+        planet = Planet(3, 3)
+        test_input = [
+            (("ff", Direction(0, 0, Orientation.NORTH)), (0, 2)),
+            (("ff", Direction(0, 0, Orientation.EAST) ), (2, 0)),
+            (("ff", Direction(0, 0, Orientation.SOUTH)), (0, 1)),
+            (("ff", Direction(0, 0, Orientation.WEST) ), (1, 0)),
+            (("fff", Direction(0, 0, Orientation.WEST) ), (0, 0)),
+        ]
+        for ((movement, position), expected_position) in test_input:
+            rover = Rover(position, planet)
+            rover.move(movement)
+            self.assert_rover_position(rover, expected_position)
+
+    @unittest.skip("not implemented")
+    def test_rover_move_backward(self):
+        movements = "b"
+        expected_position = (0, 2)
+
+        self.rover.move(movements)
+
+        self.assert_rover_position(self.rover, expected_position)
+
+    @unittest.skip("not implemented")
     def test_rover_str_list_types_allowed(self):
         movs = "ffff"
         self.rover.move(movs)
-        self.assert_rover_position(self.rover, (0, 4))
+        self.assert_rover_position(self.rover, (0, 1))
 
         movs = ["b", "b", "b", "b"]
         self.rover.move(movs)

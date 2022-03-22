@@ -29,14 +29,23 @@ class Rover(object):
         self.direction = direction
         self.planet = planet
 
+        self.direction.set_limit_x(planet.size_x)
+        self.direction.set_limit_y(planet.size_y)
+
     def move(self, move_commands: str):
         for cmd in move_commands:
             if cmd == Commands.MOVE_FORWARD:
-                pass
+                next_position = self.direction.next_position_forward()
             elif cmd == Commands.MOVE_BACKWARD:
                 pass
             else:
                 raise ValueError(f"Invalid move command='{cmd}'.")
+
+            if self.planet.has_obstacle_at(next_position):
+                print(f"Warning: Obstacle found at='{next_position}'... aborting.")
+                break
+
+            self.direction.position = next_position
 
     def turn(self, turn_commands: str):
         for cmd in turn_commands:
