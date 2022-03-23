@@ -213,10 +213,62 @@ The rover receives a character array of commands.
         - Can we ignore the obstacle (by not moving to that position) and keep moving until the last possible point? **We cannot because it is stated to 'abort the SEQUENCE of commands' and not just 'abort the COMMAND'**.
 
 ### Design:
-- Obstacle:
+- Position
+    - Notes:
+        - Simple 2D coordinate
+
+- Orientation
+    - Notes:
+        - ~~Make class~~
+        - ~~Make enum+methods~~
+        - ~~Make within Rover~~
     - Attributes:
-        - pos_x: obstacle position x
-        - pos_y: obstacle position y
+    - ~~Constructor~~ Enum:
+        - North, South, East, West
+    - Methods:
+
+- ~~OrientationUtils~~
+    - ~~Notes:~~
+        - ~~Uses Orientation and turns it in a defined direction~~
+        - ~~Static class~~
+    - ~~Attributes: auxiliar maps~~
+    - ~~Methods:~~
+        - ~~turn_orientation(turn, orientation): return orientation+turn~~
+
+- Direction:
+    - Attributes:
+        - position
+        - orientation
+        - priv limit_x = -1, used to wrap only if > 0
+        - priv limit_y = -1
+    - Constructor:
+        - [x] Direction(pos_x, pos_y, enum Orientation)
+        - Direction(obj Position, enum Orientation)
+        - We can overload
+    - Methods:
+        - private:
+            - move
+            - turn
+        - public:
+            - next_position_forward
+            - next_position_backward
+            - next_orientation_left
+            - next_orientation_right
+    - Notes:
+        - ~~If just the Rover knows where is it moving, I cannot call `move` or `turn` as public.~~
+        - Move action will be:
+            ```
+            position.x = (position.x + 1)
+            if limit_x > 0: # ... > 0 | >= 0
+                position.x = position.x % limit_x
+            ```
+            This is, apply the clamp only when the limit is defined.
+
+            ValueErrors if limits <= 0.
+
+- Obstacle:
+    - Notes:
+        - Position type alias, we do not need more attributes
 
 - Planet
     - Attributes:
@@ -232,58 +284,11 @@ The rover receives a character array of commands.
             - Somehow must be asserted that obstacles are within size_x, size_y, but it is not the Planet's job
     - Methods:
         - build(...): to random fill?
-        - is_inside_bounds(test_x, test_y): return if 0 <= (test_x, test_y) < (size_x, size_y)
-        - has_obstacle_at(test_x, test_y): return True if ~~grid[test_y][test_x] == 'o'~~ any (test_x, test_y) in obstacles else False
+        - ~~is_inside_bounds(test_x, test_y): return if 0 <= (test_x, test_y) < (size_x, size_y)~~
+        - has_obstacle_at(obs): return True if ~~grid[test_y][test_x] == 'o'~~ any (obs in obstacles) else False
 
-- Orientation
-    - Notes:
-        - ~~Make class~~
-        - ~~Make enum+methods~~
-        - ~~Make within Rover~~
-    - Attributes:
-    - ~~Constructor~~ Enum:
-        - North, South, East, West
-    - Methods:
-
-- OrientationUtils
-    - Notes:
-        - Uses Orientation and turns it in a defined direction
-        - Static class
-    - Attributes: auxiliar maps
-    - Methods:
-        - turn_orientation(turn, orientation): return orientation+turn
-
-- Direction:
-    - Attributes:
-        - position
-        - orientation
-        - limit_x = -1
-        - limit_y = -1
-    - Constructor:
-        - [x] Direction(pos_x, pos_y, enum Orientation)
-        - Direction(obj Position, enum Orientation)
-        - We can overload
-    - Methods:
-        - private:
-            - move
-            - turn
-            - auxiliar
-        - public:
-            - move_forward
-            - move_backward
-            - turn_left
-            - turn_right
-    - Notes:
-        - If just the Rover knows where is it moving, I cannot call `move` or `turn` as public.
-        - Move action will be:
-            ```
-            position.x = (position.x + 1)
-            if limit_x > 0: # ... > 0 | >= 0
-                position.x = position.x % limit_x
-            ```
-            This is, apply the clamp only when the limit is defined.
-
-            ValueErrors if limits <= 0.
+- Commands
+    - Enum, only known to rover
 
 - Rover
     - Attributes:
@@ -294,7 +299,8 @@ The rover receives a character array of commands.
         - Rover(direction)?
             - Is it possible to build a rover without a planet?
             - Can we move/turn if there is no planet?
-        - [x] Rover(pos_x, pos_y, orientation, planet)
+        - Rover(pos_x, pos_y, orientation, planet)
+        - [x] Rover(direction, planet)
     - Methods:
         - move(move_commands):
             - Logic:
@@ -330,7 +336,7 @@ The rover receives a character array of commands.
                     - [ ] `direction.next_position(planet.limit_x, planet.limit_y)`
                         - Too many parameters, the limit's will probably always be the same.
                     - [x] Inside Direction's constructor `direction.set_limit_x(planet.limit_x)`
-        - turn(turn_commands): turn for each turn in turn_commands
+        - turn(turn_commands):
             - What tells me that "N"+turn_right = "E"?
                 - [ ] ~~Orientation class~~
                     - Why? Because of an orientation sequence/order.
@@ -340,7 +346,7 @@ The rover receives a character array of commands.
                 - [ ] Rover class
                 - [ ] Other class
                 - [ ] ???
-        - process(move_and_turn_commands)?
+        - Do we need process(move_and_turn_commands)?
         - move_commands and turn_commands format:
             - List[str]: ['f','f','f']
             - str: 'fff'
