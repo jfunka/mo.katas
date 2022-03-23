@@ -8,10 +8,6 @@ Obstacle = Position
 
 class Planet(object):
 
-    size_x = 0
-    size_y = 0
-    obstacles = []
-
     def __init__(self, size_x: int = 0, size_y: int = 0, obstacles: List[Obstacle] = []):
         self.size_x = size_x
         self.size_y = size_y

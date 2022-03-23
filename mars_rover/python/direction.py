@@ -44,6 +44,7 @@ class Direction(object):
         Orientation.WEST
     ]
 
+    # Assert size not zero
     __orientation_order_size = len(__orientation_order)
 
     def __init__(self, position_x: int, position_y: int, orientation: Orientation,
@@ -52,20 +53,6 @@ class Direction(object):
         self.orientation = orientation
         self.__limit_x = limit_x
         self.__limit_y = limit_y
-
-    def __get_orientation_index(self):
-        try:
-            orientation_ptr = self.__orientation_order.index(self.orientation)
-        except ValueError:
-            # Modify exception message, test isinstance(orientation, Orientation)...
-            raise ValueError(f"Current orientation='{self.orientation}' not found in " \
-                f"{self.__orientation_order}")
-        return orientation_ptr
-
-    def __turn(self, orientation_index: int, turn_direction: int) -> Orientation:
-        # XXX: Division by zero
-        orientation_index = (orientation_index + turn_direction) % self.__orientation_order_size
-        return self.__orientation_order[orientation_index]
 
     def __move(self, move_direction_map: dict) -> Position:
         # Get move step in X and Y
@@ -83,6 +70,20 @@ class Direction(object):
             next_position.y = next_position.y % self.__limit_y
         return next_position
 
+    def __turn(self, turn_direction: int) -> Orientation:
+        # Get next orientation in direction
+        try:
+            orientation_index = self.__orientation_order.index(self.orientation)
+        except ValueError:
+            # Modify exception message, test isinstance(orientation, Orientation)...
+            raise ValueError(f"Current orientation='{self.orientation}' not found in " \
+                f"'{self.__orientation_order}'")
+        # Update
+        # XXX: Division by zero
+        orientation_index = (orientation_index + turn_direction) % self.__orientation_order_size
+        # XXX: 0 <= orientation_index < __orientation_order_size is asserted, but could be added
+        return self.__orientation_order[orientation_index]
+
     def set_limit_x(self, other):
         self.__limit_x = other
 
@@ -95,11 +96,8 @@ class Direction(object):
     def next_position_backward(self) -> Position:
         return self.__move(self.__move_backward)
 
-    def turn_left(self):
-        # Gets the current orientation and turns it.
-        # Leave the exception raised.
-        self.orientation = self.__turn(self.__get_orientation_index(), -1)
+    def next_orientation_left(self) -> Orientation:
+        return self.__turn(-1)
 
-    def turn_right(self):
-        # Same as {turn_left}
-        self.orientation = self.__turn(self.__get_orientation_index(), +1)
+    def next_orientation_right(self) -> Orientation:
+        return self.__turn(+1)

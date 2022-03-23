@@ -1,6 +1,6 @@
 
 from enum import Enum
-from direction import Orientation, Position, Direction
+from direction import Orientation, Direction
 from planet import Planet
 
 
@@ -12,7 +12,7 @@ class Commands(Enum):
     TURN_LEFT  = "l"
     TURN_RIGHT = "r"
 
-    def __eq__(self, other):
+    def __eq__(self, other: Enum):
         # To compare value Enum.value if str
         if isinstance(other, str):
             return other == self.value
@@ -21,9 +21,6 @@ class Commands(Enum):
 
 
 class Rover(object):
-
-    direction = Direction(0, 0, Orientation.NORTH)
-    planet = None
 
     def __init__(self, direction: Direction, planet: Planet):
         self.direction = direction
@@ -50,8 +47,10 @@ class Rover(object):
     def turn(self, turn_commands: str):
         for cmd in turn_commands:
             if cmd == Commands.TURN_LEFT:
-                self.direction.turn_left()
+                next_orientation = self.direction.next_orientation_left()
             elif cmd == Commands.TURN_RIGHT:
-                self.direction.turn_right()
+                next_orientation = self.direction.next_orientation_right()
             else:
                 raise ValueError(f"Invalid turn command='{cmd}'.")
+
+            self.direction.orientation = next_orientation
