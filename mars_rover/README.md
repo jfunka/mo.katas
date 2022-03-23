@@ -360,5 +360,44 @@ The rover receives a character array of commands.
             ```
             logic with the Rover class, instead of Orientation/Utils.
 
-- (optional)
-    - PlanetBuilder
+- ~~(optional)~~
+    - ~~PlanetBuilder~~
+
+---
+
+### Final remarks:
+
+- Direction
+    - We could have written classes `Position`, `Orientation`, `Direction` in separate files.
+    - Basic idea with `__move_forward`, `__move_backward`, `__orientation_order` was to predefine the possible movements instead of implementing an if-else logic. This way it might be easier to expand with newer orientations.
+    - Private functions `_move` and `_turn` are in charge of the whole logic.
+    - Risen exceptions could be left as they are or avoiding the abort instead, it was not specified in the problem description.
+    - Some division by zero might be possible depending on the class definition.
+    - Public functions `set_limit...`, `next_position_...`, `next_orientation_...` are just wrappers.
+- Planet
+    - `Obstacle` is a type alias, we could have created a class but it is not needed.
+    - `Obstacle` equality used in `has_obstacle_at` is overloaded in `Position`.
+    - Obstacle bound checking was deleted since it is not really needed. It was supposed that the obstacle list was contained within the size of the grid.
+- Rover
+    - Contains `Commands`, could be in a separate file, although only the rover knows about commands.
+        - It overloads the comparator to be able to compare a string to the Enum, if not, it was the same as using the `.value` attribute.
+    - Functions `move` and `turn` process the string or list of commands and execute the action.
+    - It is the rover who knows that which command corresponds to every action.
+    - However, we could have created a context class instead.
+    - If the format is incorrect it just raises an exception, there are also other ways to handle that.
+- Testcases:
+    - Different test cases were separated into classes to test:
+        - The rover's move action.
+        - The rover's turn action.
+        - The rover's move and turn action.
+        - The planet's obstacle definition.
+- A function to process both move and turn commands might be missing, but was not specified in the problem description. Can see an example in the `MoveTurnRoverTestCase`.
+- Custom exceptions could have been implemented (i.e. wrong Command).
+
+- Structure:
+    - The file structure was unchanged, although having src/test directories is a better practice.
+    - Sources: `{direction,planet,rover}.py`
+    - Test: `mars_rover_test_case.py`
+
+- On project root launch with:
+    - `python -m unittest mars_rover_test_case`
