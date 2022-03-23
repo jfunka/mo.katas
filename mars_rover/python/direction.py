@@ -56,6 +56,7 @@ class Direction(object):
 
     def __move(self, move_direction_map: dict) -> Position:
         # Get move step in X and Y
+        # XXX: Wrap into a function?
         next_move = move_direction_map.get(self.orientation, None)
         if next_move is None:
             raise ValueError(f"Current orientation='{self.orientation}' not found in " \
@@ -72,6 +73,7 @@ class Direction(object):
 
     def __turn(self, turn_direction: int) -> Orientation:
         # Get next orientation in direction
+        # XXX: Wrap into a function?
         try:
             orientation_index = self.__orientation_order.index(self.orientation)
         except ValueError:

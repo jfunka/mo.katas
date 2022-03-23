@@ -1,6 +1,7 @@
 
 from enum import Enum
-from direction import Orientation, Direction
+
+from direction import Direction
 from planet import Planet
 
 

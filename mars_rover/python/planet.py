@@ -1,7 +1,7 @@
 
-from direction import Position
-
 from typing import List
+
+from direction import Position
 
 
 Obstacle = Position
