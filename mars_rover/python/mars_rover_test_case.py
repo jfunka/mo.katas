@@ -38,10 +38,10 @@ class MovingRoverTestCase(unittest.TestCase):
         self.assert_rover_position(self.rover, (0, 0))
 
     def test_rover_move_forward(self):
-        movements = "f"
+        moves = "f"
         expected_position = (0, 1)
 
-        self.rover.move(movements)
+        self.rover.move(moves)
 
         self.assert_rover_position(self.rover, expected_position)
 
@@ -61,37 +61,41 @@ class MovingRoverTestCase(unittest.TestCase):
             self.assert_rover_position(rover, expected_position)
 
     def test_rover_move_backward(self):
-        movements = "b"
+        moves = "b"
         expected_position = (0, 2)
 
-        self.rover.move(movements)
+        self.rover.move(moves)
 
         self.assert_rover_position(self.rover, expected_position)
 
     def test_rover_str_list_types_allowed(self):
-        movs = "ffff"
-        self.rover.move(movs)
+        moves = "ffff"
+        self.rover.move(moves)
         self.assert_rover_position(self.rover, (0, 1))
 
-        movs = ["b", "b", "b", "b"]
-        self.rover.move(movs)
+        moves = ["b", "b", "b", "b"]
+        self.rover.move(moves)
         self.assert_rover_position(self.rover, (0, 0))
 
     def test_rover_didnt_move(self):
-        movs = "ffbb"
-        self.rover.move(movs)
+        moves = "ffbb"
+        self.rover.move(moves)
         self.assert_rover_position(self.rover, (0, 0))
 
     def test_rover_random_move(self):
-        movs = "ffbfbf"
+        moves = "ffbfbf"
         rover = Rover(Direction(0, 0, Orientation.EAST), self.planet)
-        rover.move(movs)
+        rover.move(moves)
         self.assert_rover_position(rover, (2, 0))
 
-        movs = "ff"
+        moves = "ff"
         rover = Rover(Direction(0, 0, Orientation.EAST), self.planet)
-        rover.move(movs)
+        rover.move(moves)
         self.assert_rover_position(rover, (2, 0))
+
+    def test_rover_incorrect_arg_moves(self):
+        self.assertRaises(ValueError, lambda: self.rover.move("F"))
+        self.assertRaises(ValueError, lambda: self.rover.move("a"))
 
 
 class TurningRoverTestCase(unittest.TestCase):
@@ -215,38 +219,6 @@ class PlanetTestCase(unittest.TestCase):
                     self.assertTrue(planet.has_obstacle_at(test_obs))
                 else:
                     self.assertFalse(planet.has_obstacle_at(test_obs))
-
-@unittest.skip("deprecated")
-class OrientationUtilsTestCase(unittest.TestCase):
-
-    def test_single_turn(self):
-        new_orientation = OrientationUtils.turn_orientation("l", Orientation.NORTH)
-        self.assertTrue(new_orientation == Orientation.WEST)
-
-    def test_all_possible_turns(self):
-        test_input = [
-            # ( (input_turn, input_orientation), expected_orientation )
-            (("r", Orientation.NORTH), Orientation.EAST),
-            (("r", Orientation.EAST), Orientation.SOUTH),
-            (("r", Orientation.SOUTH), Orientation.WEST),
-            (("r", Orientation.WEST), Orientation.NORTH),
-            #
-            (("l", Orientation.NORTH), Orientation.WEST),
-            (("l", Orientation.WEST), Orientation.SOUTH),
-            (("l", Orientation.SOUTH), Orientation.EAST),
-            (("l", Orientation.EAST), Orientation.NORTH),
-        ]
-        for ((input_turn, input_orientation), expected_orientation) in test_input:
-            new_orientation = OrientationUtils.turn_orientation(input_turn, input_orientation)
-            self.assertTrue(new_orientation == expected_orientation)
-
-    def test_incorrect_input_format(self):
-        # lr is expected as turn
-        # Orientation.obj is expected as orientation
-        self.assertRaises(ValueError, lambda: OrientationUtils.turn_orientation("a", Orientation.NORTH))
-
-        self.assertRaises(ValueError, lambda: OrientationUtils.turn_orientation("l", "foo"))
-
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
