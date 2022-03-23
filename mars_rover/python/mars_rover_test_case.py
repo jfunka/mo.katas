@@ -22,15 +22,15 @@ Mars rover moves through
 
 class MovingRoverTestCase(unittest.TestCase):
 
-    def setUp(self):
-        position = Direction(0, 0, Orientation.NORTH)
-        planet = Planet(3, 3)
-        self.rover = Rover(position, planet)
-
     def assert_rover_position(self, rover, expected_position):
         self.assertTrue(len(expected_position) == 2)
         self.assertEqual(expected_position[0], rover.direction.position.x)
         self.assertEqual(expected_position[1], rover.direction.position.y)
+
+    def setUp(self):
+        position = Direction(0, 0, Orientation.NORTH)
+        self.planet = Planet(3, 3)
+        self.rover = Rover(position, self.planet)
 
     def test_rover_edge_cases(self):
         self.rover.move([])
@@ -77,6 +77,22 @@ class MovingRoverTestCase(unittest.TestCase):
         self.rover.move(movs)
         self.assert_rover_position(self.rover, (0, 0))
 
+    def test_rover_didnt_move(self):
+        movs = "ffbb"
+        self.rover.move(movs)
+        self.assert_rover_position(self.rover, (0, 0))
+
+    def test_rover_random_move(self):
+        movs = "ffbfbf"
+        rover = Rover(Direction(0, 0, Orientation.EAST), self.planet)
+        rover.move(movs)
+        self.assert_rover_position(rover, (2, 0))
+
+        movs = "ff"
+        rover = Rover(Direction(0, 0, Orientation.EAST), self.planet)
+        rover.move(movs)
+        self.assert_rover_position(rover, (2, 0))
+
 
 class TurningRoverTestCase(unittest.TestCase):
 
@@ -118,10 +134,56 @@ class TurningRoverTestCase(unittest.TestCase):
         self.rover_east.turn("r")
         self.assert_rover_orientation(self.rover_east, Orientation.SOUTH)
 
-    def test_aaa(self):
-        self.rover_east.turn("r")
-        x = self.rover_east.direction.orientation
-        self.assert_rover_orientation(self.rover_east, Orientation.SOUTH)
+
+class MoveTurnRoverTestCase(unittest.TestCase):
+
+    def assert_rover_position(self, rover, expected_position):
+        self.assertTrue(len(expected_position) == 2)
+        self.assertEqual(expected_position[0], rover.direction.position.x)
+        self.assertEqual(expected_position[1], rover.direction.position.y)
+
+    def assert_rover_orientation(self, rover, expected_orientation):
+        self.assertTrue(rover.direction.orientation == expected_orientation)
+
+    def setUp(self):
+        planet = Planet(3, 3)
+        self.rover = Rover(Direction(0, 0, Orientation.NORTH), planet)
+
+    def test_rover_move_L(self):
+        command_sequence = "frf"
+        for cmd in command_sequence:
+            if cmd in "lr":
+                self.rover.turn(cmd)
+            else:
+                self.assertTrue(cmd in "fb")
+                self.rover.move(cmd)
+
+        self.assert_rover_position(self.rover, (1, 1))
+        self.assert_rover_orientation(self.rover, Orientation.EAST)
+
+    def test_rover_move_in_a_circle(self):
+        command_sequence = "frfrfrfr"
+        for cmd in command_sequence:
+            if cmd in "lr":
+                self.rover.turn(cmd)
+            else:
+                self.assertTrue(cmd in "fb")
+                self.rover.move(cmd)
+
+        self.assert_rover_position(self.rover, (0, 0))
+        self.assert_rover_orientation(self.rover, Orientation.NORTH)
+
+    def test_rover_move_back_and_forth(self):
+        command_sequence = "fflbblffrffr"
+        for cmd in command_sequence:
+            if cmd in "lr":
+                self.rover.turn(cmd)
+            else:
+                self.assertTrue(cmd in "fb")
+                self.rover.move(cmd)
+
+        self.assert_rover_position(self.rover, (0, 0))
+        self.assert_rover_orientation(self.rover, Orientation.NORTH)
 
 
 class PlanetTestCase(unittest.TestCase):
